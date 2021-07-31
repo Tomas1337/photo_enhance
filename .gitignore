@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 /GFPGAN/experiments/pretrained_models/GFPGANv1.pth.1
-/Projects/photo_enhance/GFPGAN/experiments/pretrained_models/GFPGANv1.pth.2
+/GFPGAN/experiments/pretrained_models/GFPGANv1.pth.2

@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+    application: 
+        build: .
+        environment:
+            - NVIDIA_VISIBLE_DEVICES=all  # or device number (e.g. 0) to allow a single gpu
+        volumes:
+            #- gfpgan-volume:/app
+            # TODO
+            # Cant figure out how to mount this on build
+            - /c/Projects/photoEnhance/GFPGAN:/app/GFPGAN
+        ports:
+            - "60000:8888"  # port for JupyterLab (or JupyterNotebook)
+            - "60001:22"  # port for ssh
+            - 8000:8000
+        tty: true
+volumes:
+    gfpgan-volume: {}

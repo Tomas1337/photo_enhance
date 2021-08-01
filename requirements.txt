@@ -1,7 +1,11 @@
+cloudinary
+fastapi
 facexlib
 lmdb
+python-multipart
 numpy
 opencv-python
+python-multipart
 pyyaml
 tb-nightly
 torch>=1.7

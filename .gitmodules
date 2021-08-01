@@ -1,3 +1,4 @@
 [submodule "GFPGAN"]
 	path = GFPGAN
 	url = https://github.com/Tomas1337/GFPGAN
+	branch = stable

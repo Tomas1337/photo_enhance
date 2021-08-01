@@ -11,19 +11,16 @@ RUN CUDA_HOME=/usr/local/cuda \
     CUDNN_LIB_DIR=/usr/local/cuda \
     BASICSR_EXT=True pip install basicsr
 
-# RUN git clone https://github.com/Tomas1337/photo_enhance
-# WORKDIR /photo_enhance/
-# RUN git submodule init && git submodule update
-
-# RUN wget https://github.com/TencentARC/GFPGAN/releases/download/v0.1.0/GFPGANv1.pth -P GFPGAN/experiments/pretrained_models &&\
-#     wget https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -P /opt/conda/lib/python3.8/site-packages/facexlib/weights
+RUN wget https://github.com/TencentARC/GFPGAN/releases/download/v0.1.0/GFPGANv1.pth -P GFPGAN/experiments/pretrained_models &&\
+    wget https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth -P /opt/conda/lib/python3.8/site-packages/facexlib/weights
 
 # COPY ./requirements.txt /app/GFPGAN/
 
-# RUN pip install -r requirements.txt
+WORKDIR /app/GFPGAN/
+RUN pip install -r requirements.txt
 
-# EXPOSE 8000
-# ENV BASICSR_JIT='True'
+EXPOSE 8000
+ENV BASICSR_JIT='True'
 
 # use docker-compose (up) --build to build the docker image
 # use below command to run the docker image 

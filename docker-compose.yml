@@ -1,18 +1,85 @@
 version: "3.9"
 services:
-    application: 
-        build: .
+    gfpgan: 
+        build: ./GFPGAN
+        hostname: gfpgan
+        networks:
+            - backend
         environment:
             - NVIDIA_VISIBLE_DEVICES=all  # or device number (e.g. 0) to allow a single gpu
-        volumes:
-            #- gfpgan-volume:/app
-            # TODO
-            # Cant figure out how to mount this on build
-            - /c/Projects/photoEnhance/GFPGAN:/app/GFPGAN
         ports:
             - "60000:8888"  # port for JupyterLab (or JupyterNotebook)
-            - "60001:22"  # port for ssh
+            - "60001:22"  # port for ssh    
             - 8000:8000
         tty: true
-volumes:
-    gfpgan-volume: {}
+        volumes:
+            - .:/app
+        #Use this deply configuration to get access to GPU thoruhg a docker container
+        deploy:
+            resources:
+              reservations:
+                devices:
+                - capabilities: [gpu]
+
+        depends_on: 
+            - rabbit
+
+    redis:
+        image: 'redis:alpine'
+        restart: always
+        networks:
+            - backend
+        container_name: redis
+        expose:
+            - "6379"
+        ports:
+            - "6379:6379"
+        hostname: redis
+        command: redis-server #--requirepass adminadmin
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 1s
+            timeout: 3s
+            retries: 30
+    
+    rabbit:
+        image: 'rabbitmq:3.8-management-alpine'
+        hostname: 'rabbit'
+        container_name: 'rabbit'
+        networks:
+            - backend
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+            RABBITMQ_DEFAULT_USER: "admin"
+            RABBITMQ_DEFAULT_PASS: "mypass"
+            RABBITMQ_DEFAULT_VHOST: "/"
+        healthcheck:
+            test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        # volumes:
+        #     - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        #     - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    
+    # celery_worker:
+    #     hostname: celery_worker
+    #     build: './celery_worker'
+    #     user: nobody
+    #     depends_on:
+    #         - rabbit
+    #         - gfpgan
+    #     tty: true
+    #     networks:
+    #         - backend
+    #     command: celery -A GFPGAN.celery:app worker -l info -Q celery_worker -c 1 -n celery_worker@%h -Ofair
+    #     volumes:
+    #         - .:/app
+networks:
+    backend:
+        name: backend_network
+        driver: bridge
+        

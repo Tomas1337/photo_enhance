@@ -18,12 +18,16 @@ Build steps
 3. Build then run docker from the docker-compose file
 
     docker-compose build -t photo_enhance_application:stable
+    docker-compose up
 
-    docker run -p 8000:8000 --gpus all --rm -v ./GFPGAN:/app/GFPGAN -it photo_enhance_application:stable
-
-4. Finally inside docker, run:
+4. Finally inside the gfpgan docker, run:
 
     uvicorn main:app --host = 0.0.0.0 -p 8000
+
+5. This app uses celery for task queing. Run the celery server on a different terminal but on the same docker image as where fastapi & GFPGAN is:
+
+    celery -A celeryConfig.celery_app worker -l info --concurrency 4 -f celery.log
+
 
 # Deploy Docker Image
 Note:

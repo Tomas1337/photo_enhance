@@ -17,9 +17,11 @@ services:
         #Use this deply configuration to get access to GPU thoruhg a docker container
         deploy:
             resources:
-              reservations:
-                devices:
-                - capabilities: [gpu]
+                limits:
+                  memory: 12G
+                reservations:
+                 devices:
+                 - capabilities: [gpu]
 
         depends_on: 
             - rabbit
@@ -41,6 +43,11 @@ services:
             interval: 1s
             timeout: 3s
             retries: 30
+        deploy:
+            resources:
+                limits:
+                    memory: 1G
+        
     
     rabbit:
         image: 'rabbitmq:3.8-management-alpine'
@@ -61,23 +68,15 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+        deploy:
+            resources:
+                limits:
+                    memory: 1G
         # volumes:
         #     - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         #     - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
     
-    # celery_worker:
-    #     hostname: celery_worker
-    #     build: './celery_worker'
-    #     user: nobody
-    #     depends_on:
-    #         - rabbit
-    #         - gfpgan
-    #     tty: true
-    #     networks:
-    #         - backend
-    #     command: celery -A GFPGAN.celery:app worker -l info -Q celery_worker -c 1 -n celery_worker@%h -Ofair
-    #     volumes:
-    #         - .:/app
 networks:
     backend:
         name: backend_network

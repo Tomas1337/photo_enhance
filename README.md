@@ -22,11 +22,11 @@ Build steps
 
 4. Finally inside the gfpgan docker, run:
 
-    uvicorn main:app --host = 0.0.0.0 -p 8000
+    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 5. This app uses celery for task queing. Run the celery server on a different terminal but on the same docker image as where fastapi & GFPGAN is:
 
-    celery -A celeryConfig.celery_app worker -l info --concurrency 4 -f celery.log
+    celery -A celeryConfig.celery_app worker -l info --concurrency 1 -f celery.log -E
 
 
 # Deploy Docker Image
